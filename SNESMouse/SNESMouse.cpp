@@ -2,8 +2,13 @@
 #include <iostream>
 #include <SDL.h>
 #include <Windows.h>
+#include <chrono>
+#include <thread>
 
-int mouse_movement_interval = 10;
+int mouse_movement_interval = 5;
+
+int hold_direction = -1;
+bool hold = false;
 
 void move_mouse(int direction) {
 	POINT mouse_position;
@@ -17,22 +22,36 @@ void move_mouse(int direction) {
 
 	switch (direction) {
 		case 0:
-			std::cout << "Mouse moving up" << std::endl;
+			std::cout << "Mouse moving up";
 			SetCursorPos(mouse_position.x, mouse_position.y - mouse_movement_interval);
 			break;
 		case 1:
-			std::cout << "Mouse moving down" << std::endl;
+			std::cout << "Mouse moving down";
 			SetCursorPos(mouse_position.x, mouse_position.y + mouse_movement_interval);
 			break;
 		case 2:
-			std::cout << "Mouse moving left" << std::endl;
+			std::cout << "Mouse moving left";
 			SetCursorPos(mouse_position.x - mouse_movement_interval, mouse_position.y);
 			break;
 		case 3:
-			std::cout << "Mouse moving right" << std::endl;
+			std::cout << "Mouse moving right";
 			SetCursorPos(mouse_position.x + mouse_movement_interval, mouse_position.y);
 			break;
 	}
+
+	std::cout << " from (X: " << mouse_position.x << ", Y: " << mouse_position.y << ")";
+	GetCursorPos(&mouse_position);
+	std::cout << " to (X: " << mouse_position.x << ", Y: " << mouse_position.y << ")" << std::endl;
+}
+
+void move_mouse_hold(int direction) {
+	hold_direction = direction;
+	hold = true;
+}
+
+void release() {
+	hold = false;
+	hold_direction = -1;
 }
 
 void click_mouse(bool left_or_right, bool down_or_up) {
@@ -65,6 +84,18 @@ void click_mouse(bool left_or_right, bool down_or_up) {
 
 void handle_button_press(SDL_Event event) {
 	switch (event.jbutton.button) {
+		case 0:
+			move_mouse_hold(0);
+			break;
+		case 1:
+			move_mouse_hold(3);
+			break;
+		case 2:
+			move_mouse_hold(1);
+			break;
+		case 3:
+			move_mouse_hold(2);
+			break;
 		case 4:
 			std::cout << "Left click down" << std::endl;
 			click_mouse(true, true);
@@ -74,24 +105,36 @@ void handle_button_press(SDL_Event event) {
 			click_mouse(false, true);
 			break;
 		case 9:
-			if (mouse_movement_interval < 100) {
-				mouse_movement_interval += 5;
+			if (mouse_movement_interval < 20) {
+				mouse_movement_interval += 1;
 				std::cout << "Increased mouse movement interval to " << mouse_movement_interval << std::endl;
 			}
-			else std::cout << "Mouse movement interval is already at maximum of 100!" << std::endl;
+			else std::cout << "Mouse movement interval is already at maximum of 20!" << std::endl;
 			break;
 		case 8:
-			if (mouse_movement_interval > 5) {
-				mouse_movement_interval -= 5;
+			if (mouse_movement_interval > 1) {
+				mouse_movement_interval -= 1;
 				std::cout << "Decreased mouse movement interval to " << mouse_movement_interval << std::endl;
 			}
-			else std::cout << "Mouse movement interval is already at minimum of 5!" << std::endl;
+			else std::cout << "Mouse movement interval is already at minimum of 1!" << std::endl;
 			break;
 	}
 }
 
 void handle_button_release(SDL_Event event) {
 	switch (event.jbutton.button) {
+	case 0:
+		release();
+		break;
+	case 1:
+		release();
+		break;
+	case 2:
+		release();
+		break;
+	case 3:
+		release();
+		break;
 	case 4:
 		std::cout << "Left click up" << std::endl;
 		click_mouse(true, false);
@@ -146,6 +189,11 @@ int main()
 		printf("\t%d %s\n", i, SDL_JoystickName(SDL_JoystickOpen(i)));
 
 	while (true) {
+		if (hold) {
+			move_mouse(hold_direction);
+			std::this_thread::sleep_for(std::chrono::milliseconds(15));
+		}
+
 		while (SDL_PollEvent(&event))
 		{
 			switch (event.type) {
