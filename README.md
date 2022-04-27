@@ -1,11 +1,11 @@
 # SNESMouse
 A C++ Program that converts a USB SNES controller into a mouse.
 
-NOTE: GitHub says this is a C project because of the sheer number of header files that have been included from SDL.
-
 # Building 
 
-Just download all the files and cross your fingers. SDL is already inside the project and the Visual Studio solution has been configured to automatically detect it and link it and all that jazz.
+1) [Download SDL Development library for VS](https://www.libsdl.org/download-2.0.php)
+2) Extract the `lib` and `include` folders into the SDL2 folder at the root of the project.
+3) Load the SLN into Visual Studio
 
 # Using SNESMouse
 
