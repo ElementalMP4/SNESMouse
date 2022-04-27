@@ -1,5 +1,7 @@
 # SNESMouse
-A C++ Program that converts a USB SNES controller into a mouse
+A C++ Program that converts a USB SNES controller into a mouse.
+
+NOTE: GitHub says this is a C project because of the sheer number of header files that have been included from SDL.
 
 # Building 
 
