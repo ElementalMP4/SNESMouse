@@ -11,7 +11,9 @@ A C++ Program that converts a USB SNES controller into a mouse.
 
 You will need a USB SNES controller.
 
-The D-pad moves the cursor around
+The D-pad moves the cursor around precisely
+
+The ABXY buttons can be used to quickly move the mouse around by pressing and holding
 
 The shoulder buttons are left and right click respectively
 
